@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Visualizing Algorithms</title>
+        <link rel="stylesheet" href="styles.css">
+        <script type="text/javascript" src="d3/d3.v3.min.js"></script>
+    </head>
+
+    <body>
+        <h1>Conway's Game of Life</h1>
+        <p>This is a work in progress. The transition function does not work correctly. So a random generation function is used to get updated data.</p>
+
+        <script type="text/javascript">
+
+            // set grid dimensions
+            var grid_width = 10;
+            var grid_height = 10;
+            var grid_status = [];
+
+            // create an empty SVG
+            var svg = d3.select("body")
+                .append("svg")
+                .attr("width", 500)
+                .attr("height", 500);
+
+            function generate_random_grid() {
+                // generate a random initial grid
+                grid_status = [];
+                for (var i = 0; i < grid_width * grid_height; i++) {
+                    var newNumber = Math.random() > 0.1 ? 0: 1;
+                    grid_status.push(newNumber);
+                }
+            }
+
+            // transit based on the rules of conway's game of life
+            function transit() {
+                var alive = 0;
+                var idx = 0;
+                var grid_status_old = grid_status;
+                for (var i = 0; i < grid_width; i++) {
+                    for (var j = 0; j < grid_height; j++) {
+                        idx = i + j * grid_width;
+                        alive = 0;
+                        
+                        // above
+                        if (j > 0) {
+                            if (grid_status_old[i + (j-1)*grid_width] == 1) {
+                                alive = alive + 1;
+                            }
+                        }
+
+                        // below
+                        if (j < grid_height - 1) {
+                            if (grid_status_old[i + (j+1)*grid_width] == 1) {
+                                alive = alive + 1;
+                            }
+                        }
+
+                        // right
+                        if (i > 0) {
+                            if (grid_status_old[i + j*grid_width - 1] == 1) {
+                                alive = alive + 1;
+                            }
+                        }
+
+                        // left
+                        if (i < grid_width - 1) {
+                            if (grid_status_old[i + j*grid_width + 1] == 1) {
+                                alive = alive + 1;
+                            }
+                        }
+                        
+                        if (alive < 2)
+                            grid_status[idx] = 0;
+                        else if (alive > 3 && grid_status_old[idx] == 0)
+                            grid_status[idx] = 1;
+                    }
+                }
+            }
+
+            // render the grid based on data in grid_status
+            function render() {
+                svg.selectAll("rect")
+                    .data(grid_status)
+                    .enter()
+                    .append("rect")
+                    .attr("width", 20)
+                    .attr("height", 20)
+                    .style("x", function(d, i) {
+                        return i % grid_width * 20;
+                    })
+                    .style("y", function(d, i) {
+                        return Math.floor(i / grid_width) * 20;
+                    })
+                    .style("fill", function(d, i) {
+                        if (d == 0) {
+                            return "black";
+                        } else {
+                            return "red";
+                        }
+                    });
+            }
+
+            function transit_and_render() {
+                // generate new values
+                generate_random_grid();
+                // transit();
+
+                // transit to display the new data
+                svg.selectAll("rect").
+                    data(grid_status)
+                    .transition()
+                    .duration(1200)
+                    .style("fill", function(d, i) {
+                        if (d == 0) {
+                            return "black";
+                        } else {
+                            return "red";
+                        }
+                    });
+            }
+
+            // generate and render the initial matrix
+            generate_random_grid();
+            render();
+
+            // set timer for periodic update
+            setInterval(transit_and_render, 1500);
+        </script>
+    
+    </body>
+</html>
+

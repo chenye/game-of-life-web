@@ -13,10 +13,16 @@
 
         <script type="text/javascript">
 
+            // define an array of colors
+            var rect_colors = ["black", "darkred", "darkblue", "darkgreen", "green"];
+
             // set grid dimensions
             var grid_width = 10;
             var grid_height = 10;
             var grid_status = [];
+            
+            // number of alive neighbors
+            var grid_alive_neighbors = [];
 
             // create an empty SVG
             var svg = d3.select("body")
@@ -24,109 +30,137 @@
                 .attr("width", 500)
                 .attr("height", 500);
 
+            // create another empty SVG for showing the "alive" score
+            var svg_alive = d3.select("body")
+                .append("svg")
+                .attr("width", 500)
+                .attr("height", 500);
+
             function generate_random_grid() {
                 // generate a random initial grid
                 grid_status = [];
-                for (var i = 0; i < grid_width * grid_height; i++) {
-                    var newNumber = Math.random() > 0.1 ? 0: 1;
-                    grid_status.push(newNumber);
+                for (var i = 0; i < grid_height; i++) {
+                    grid_status[i] = [];
+                    for (var j = 0; j < grid_width; j++) {
+                        var newNumber = Math.random() > 0.1 ? 0: 1;
+                        grid_status[i][j] = newNumber;
+                    }
                 }
+            }
+
+            function update_grid_alive_neighbors() {
+                var alive = 0;
+                for (var i = 0; i < grid_height; i++) {
+                    for (var j = 0; j < grid_width; j++) {
+                        alive = 0;
+
+                        // above
+                        if (i > 0) {
+                            alive = alive + grid_status[i-1][j];
+                        }
+
+                        //below
+                        if (i < grid_height - 1) {
+                            alive = alive + grid_status[i+1][j];
+                        }
+
+                        // left
+                        if (j > 0) {
+                            alive = alive + grid_status[i][j-1];
+                        }
+
+                        // right
+                        if (j < grid_width - 1) {
+                            alive = alive + grid_status[i][j+1];
+                        }
+                        
+                        grid_alive_neighbors[i][j] = alive;
+                    }
+                }
+
             }
 
             // transit based on the rules of conway's game of life
             function transit() {
-                var alive = 0;
-                var idx = 0;
-                var grid_status_old = grid_status;
+                // var alive = 0;
+                // var idx = 0;
+                // var grid_status_old = grid_status.slice(0);
                 for (var i = 0; i < grid_width; i++) {
                     for (var j = 0; j < grid_height; j++) {
-                        idx = i + j * grid_width;
-                        alive = 0;
                         
-                        // above
-                        if (j > 0) {
-                            if (grid_status_old[i + (j-1)*grid_width] == 1) {
-                                alive = alive + 1;
-                            }
-                        }
-
-                        // below
-                        if (j < grid_height - 1) {
-                            if (grid_status_old[i + (j+1)*grid_width] == 1) {
-                                alive = alive + 1;
-                            }
-                        }
-
-                        // right
-                        if (i > 0) {
-                            if (grid_status_old[i + j*grid_width - 1] == 1) {
-                                alive = alive + 1;
-                            }
-                        }
-
-                        // left
-                        if (i < grid_width - 1) {
-                            if (grid_status_old[i + j*grid_width + 1] == 1) {
-                                alive = alive + 1;
-                            }
-                        }
-                        
-                        if (alive < 2)
-                            grid_status[idx] = 0;
-                        else if (alive > 3 && grid_status_old[idx] == 0)
-                            grid_status[idx] = 1;
+                        if (grid_alive_neighbors[i][j] < 2)
+                            grid_status[i][j] = 0;
+                        else if (grid_alive_neighbors >= 3 && grid_status[i][j] == 0)
+                            grid_status[i][j] = 1;
                     }
                 }
             }
 
             // render the grid based on data in grid_status
-            function render() {
-                svg.selectAll("rect")
-                    .data(grid_status)
+            function render(svg_to_use, data_to_show) {
+                svg_to_use.append("g")
+                    .selectAll("g")
+                    .data(data_to_show)
+                    .enter()
+                    .append("g")
+                    .selectAll("rect")
+                    .data(function(d,i,j) { return d; })
                     .enter()
                     .append("rect")
                     .attr("width", 20)
                     .attr("height", 20)
-                    .style("x", function(d, i) {
-                        return i % grid_width * 20;
+                    .style("x", function(d, i, j) {
+                        return i * 20;
                     })
-                    .style("y", function(d, i) {
-                        return Math.floor(i / grid_width) * 20;
+                    .style("y", function(d, i, j) {
+                        return j * 20;
                     })
                     .style("fill", function(d, i) {
-                        if (d == 0) {
-                            return "black";
-                        } else {
-                            return "red";
-                        }
+                        return rect_colors[d];
                     });
+            }
+
+            function render_table(data_to_show) {
+                d3.selectAll("table").selectAll("tr")
+                    .data(data_to_show)
+                    .enter()
+                    .append("tr")
+                    .text(function(d, i, j) { return data_to_show[i][j]; });
             }
 
             function transit_and_render() {
                 // generate new values
-                generate_random_grid();
-                // transit();
+                // generate_random_grid();
+                update_grid_alive_neighbors();
+                transit();
 
                 // transit to display the new data
                 svg.selectAll("rect").
-                    data(grid_status)
+                    data([].concat.apply(grid_status))
                     .transition()
                     .duration(1200)
                     .style("fill", function(d, i) {
-                        if (d == 0) {
-                            return "black";
-                        } else {
-                            return "red";
-                        }
+                        return rect_colors[d];
+                    });
+                svg_alive.selectAll("rect")
+                    .data([].concat.apply(grid_alive_neighbors))
+                    .transition()
+                    .duration(1200)
+                    .style("fill", function(d, i) {
+                        return rect_colors[d];
                     });
             }
 
             // generate and render the initial matrix
             generate_random_grid();
-            render();
+            // update_grid_alive_neighbors();
+
+            render(svg, grid_status);
+            // render(svg_alive, grid_status);
+            // render_table(grid_status);
 
             // set timer for periodic update
-            setInterval(transit_and_render, 1500);
+            // setInterval(transit_and_render, 1500);
         </script>
     
     </body>

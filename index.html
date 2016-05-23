@@ -73,7 +73,7 @@
                         
                         if (alive < 2)
                             grid_status[idx] = 0;
-                        else if (alive > 3 && grid_status_old[idx] == 0)
+                        else if (alive >= 3 && grid_status_old[idx] == 0)
                             grid_status[idx] = 1;
                     }
                 }

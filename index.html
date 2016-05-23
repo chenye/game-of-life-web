@@ -50,7 +50,9 @@
 
             function update_grid_alive_neighbors() {
                 var alive = 0;
+                grid_alive_neighbors = [];
                 for (var i = 0; i < grid_height; i++) {
+                    grid_alive_neighbors[i] = [];
                     for (var j = 0; j < grid_width; j++) {
                         alive = 0;
 
@@ -135,32 +137,32 @@
                 transit();
 
                 // transit to display the new data
-                svg.selectAll("rect").
-                    data([].concat.apply(grid_status))
+                svg.select("g").selectAll("g").selectAll("rect")
+                    .data(grid_status)
                     .transition()
                     .duration(1200)
-                    .style("fill", function(d, i) {
+                    .style("fill", function(d, i, j) {
                         return rect_colors[d];
                     });
-                svg_alive.selectAll("rect")
-                    .data([].concat.apply(grid_alive_neighbors))
+                svg_alive.select("g").selectAll("g").selectAll("rect")
+                    .data(grid_alive_neighbors)
                     .transition()
                     .duration(1200)
-                    .style("fill", function(d, i) {
+                    .style("fill", function(d, i, j) {
                         return rect_colors[d];
                     });
             }
 
             // generate and render the initial matrix
             generate_random_grid();
-            // update_grid_alive_neighbors();
+            update_grid_alive_neighbors();
 
             render(svg, grid_status);
-            // render(svg_alive, grid_status);
+            render(svg_alive, grid_alive_neighbors);
             // render_table(grid_status);
 
             // set timer for periodic update
-            // setInterval(transit_and_render, 1500);
+            setInterval(transit_and_render, 1500);
         </script>
     
     </body>

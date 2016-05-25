@@ -27,14 +27,14 @@
             // create an empty SVG
             var svg = d3.select("body")
                 .append("svg")
-                .attr("width", 500)
-                .attr("height", 500);
+                .attr("width", grid_width * 20)
+                .attr("height", grid_height * 20);
 
             // create another empty SVG for showing the "alive" score
             var svg_alive = d3.select("body")
                 .append("svg")
-                .attr("width", 500)
-                .attr("height", 500);
+                .attr("width", grid_width * 20)
+                .attr("height", grid_height * 20);
 
             function generate_random_grid() {
                 // generate a random initial grid
@@ -42,7 +42,7 @@
                 for (var i = 0; i < grid_height; i++) {
                     grid_status[i] = [];
                     for (var j = 0; j < grid_width; j++) {
-                        var newNumber = Math.random() > 0.1 ? 0: 1;
+                        var newNumber = Math.random() > 0.5 ? 0: 1;
                         grid_status[i][j] = newNumber;
                     }
                 }
@@ -133,21 +133,21 @@
             function transit_and_render() {
                 // generate new values
                 // generate_random_grid();
-                update_grid_alive_neighbors();
                 transit();
+                update_grid_alive_neighbors();
 
                 // transit to display the new data
-                svg.select("g").selectAll("g").selectAll("rect")
+                svg.select("g").selectAll("g")
                     .data(grid_status)
-                    .transition()
-                    .duration(1200)
+                    .selectAll("rect")
+                    .data(function(d, i, j) { return d; })
                     .style("fill", function(d, i, j) {
                         return rect_colors[d];
                     });
-                svg_alive.select("g").selectAll("g").selectAll("rect")
+                svg_alive.select("g").selectAll("g")
                     .data(grid_alive_neighbors)
-                    .transition()
-                    .duration(1200)
+                    .selectAll("rect")
+                    .data(function(d, i, j) { return d; })
                     .style("fill", function(d, i, j) {
                         return rect_colors[d];
                     });
@@ -162,9 +162,10 @@
             // render_table(grid_status);
 
             // set timer for periodic update
-            setInterval(transit_and_render, 1500);
+            // setInterval(transit_and_render, 1500);
         </script>
-    
+
+        <button onclick="transit_and_render()">Next</button>
     </body>
 </html>
 

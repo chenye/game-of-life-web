@@ -10,7 +10,7 @@
     <body>
         <h1>Conway's Game of Life</h1>
         <p>This is a work in progress. The transition function does not work correctly. So a random generation function is used to get updated data.</p>
-        <p>Probability of lives = 0.5.</p>
+
         <script type="text/javascript">
 
             // define an array of colors
@@ -39,18 +39,12 @@
             function generate_random_grid() {
                 // generate a random initial grid
                 grid_status = [];
-<<<<<<< HEAD
                 for (var i = 0; i < grid_height; i++) {
                     grid_status[i] = [];
                     for (var j = 0; j < grid_width; j++) {
                         var newNumber = Math.random() > 0.5 ? 0: 1;
                         grid_status[i][j] = newNumber;
                     }
-=======
-                for (var i = 0; i < grid_width * grid_height; i++) {
-                    var newNumber = Math.random() > 0.5 ? 0: 1;
-                    grid_status.push(newNumber);
->>>>>>> 16d9b77e0d067defda1c5b4770b2a9690a47cdca
                 }
             }
 
@@ -82,7 +76,6 @@
                             alive = alive + grid_status[i][j+1];
                         }
                         
-<<<<<<< HEAD
                         grid_alive_neighbors[i][j] = alive;
                     }
                 }
@@ -101,12 +94,6 @@
                             grid_status[i][j] = 0;
                         else if (grid_alive_neighbors >= 3 && grid_status[i][j] == 0)
                             grid_status[i][j] = 1;
-=======
-                        if (alive < 2)
-                            grid_status[idx] = 0;
-                        else if (alive >= 3 && grid_status_old[idx] == 0)
-                            grid_status[idx] = 1;
->>>>>>> 16d9b77e0d067defda1c5b4770b2a9690a47cdca
                     }
                 }
             }
@@ -147,10 +134,7 @@
                 // generate new values
                 // generate_random_grid();
                 transit();
-<<<<<<< HEAD
                 update_grid_alive_neighbors();
-=======
->>>>>>> 16d9b77e0d067defda1c5b4770b2a9690a47cdca
 
                 // transit to display the new data
                 svg.select("g").selectAll("g")

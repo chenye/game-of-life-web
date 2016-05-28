@@ -18,8 +18,9 @@
             var loc_diff = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, 1], [1, 0], [1, -1]];
 
             // set grid dimensions
-            var grid_width = 10;
-            var grid_height = 10;
+            var grid_width = 100;
+            var grid_height = 100;
+            var resolution = 5;
             var grid_status = [];
             
             // number of alive neighbors
@@ -28,14 +29,14 @@
             // create an empty SVG
             var svg = d3.select("body")
                 .append("svg")
-                .attr("width", grid_width * 20 + 10)
-                .attr("height", grid_height * 20);
+                .attr("width", grid_width * resolution + 10)
+                .attr("height", grid_height * resolution);
 
             // create another empty SVG for showing the "alive" score
             var svg_alive = d3.select("body")
                 .append("svg")
-                .attr("width", grid_width * 20)
-                .attr("height", grid_height * 20);
+                .attr("width", grid_width * resolution)
+                .attr("height", grid_height * resolution);
 
             function generate_random_grid() {
                 // generate a random initial grid
@@ -102,13 +103,13 @@
                     .data(function(d,i,j) { return d; })
                     .enter()
                     .append("rect")
-                    .attr("width", 20)
-                    .attr("height", 20)
+                    .attr("width", resolution)
+                    .attr("height", resolution)
                     .style("x", function(d, i, j) {
-                        return i * 20;
+                        return i * resolution;
                     })
                     .style("y", function(d, i, j) {
-                        return j * 20;
+                        return j * resolution;
                     })
                     .style("fill", function(d, i) {
                         return rect_colors[d];

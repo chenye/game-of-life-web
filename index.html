@@ -116,12 +116,7 @@
                     });
             }
 
-            function transit_and_render() {
-                // generate new values
-                // generate_random_grid();
-                transit();
-                update_grid_alive_neighbors();
-
+            function update_svgs() {
                 // transit to display the new data
                 svg.select("g").selectAll("g")
                     .data(grid_status)
@@ -143,12 +138,24 @@
                     });
             }
 
+            function transit_and_render() {
+                transit();
+                update_grid_alive_neighbors();
+                update_svgs();
+            }
+
             function random_init() {
                 generate_random_grid();
                 update_grid_alive_neighbors();
 
                 render(svg, grid_status);
                 render(svg_alive, grid_alive_neighbors);
+            }
+
+            function restart() {
+                generate_random_grid();
+                update_grid_alive_neighbors();
+                update_svgs();
             }
 
             // generate and render the initial matrix
@@ -160,7 +167,7 @@
 
         <br/>
         <button onclick="transit_and_render()">Next</button>
-        <button onclick="random_init()">Restart</button>
+        <button onclick="restart();">Restart</button>
     </body>
 </html>
 

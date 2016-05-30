@@ -194,6 +194,15 @@
                 random_init();
                 update_svg_sizes();
             }
+
+            function resize_map() {
+                grid_size = Number(document.getElementById("grid_size_text").value);
+                remove_maps();
+                render(svg, grid_status);
+                render(svg_alive, grid_alive_neighbors);
+                update_svg_sizes();
+            }
+
             // generate and render the initial matrix
             create_svgs();
             random_init();
@@ -218,8 +227,7 @@
         </p>
 
         <p>Grid size:
-            <input class="textBox" id="grid_size_text" value="5" size=3/>
-            <button onclick="reset_map_and_restart()">Set and restart</button>
+            <input type="range" id="grid_size_text" min=1 max=10 value=5 onchange="resize_map()"/>
         </p>
     </body>
 </html>

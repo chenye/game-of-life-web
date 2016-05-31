@@ -153,10 +153,15 @@
                     });
             }
 
+            function update_iter() {
+                document.getElementById("alg_iter").innerHTML = "Current Iteration: " + String(cur_iter);
+            }
+
             function transit_and_render() {
                 transit();
                 update_grid_alive_neighbors();
                 update_svgs();
+                update_iter();
             }
 
             function random_init() {
@@ -165,12 +170,14 @@
 
                 render(svg, grid_status);
                 render(svg_alive, grid_alive_neighbors);
+                update_iter();
             }
 
             function restart() {
                 generate_random_grid();
                 update_grid_alive_neighbors();
                 update_svgs();
+                update_iter();
             }
             
             function remove_maps() {
@@ -207,16 +214,14 @@
             }
 
             // generate and render the initial matrix
-            create_svgs();
-            random_init();
+            // create_svgs();
+            // random_init();
 
             // set timer for periodic update
-            setInterval(transit_and_render, 2000);
+            // setInterval(transit_and_render, 2000);
         </script>
-
-        <br/>
+        <p id="alg_iter">Current Iteration: 0</p>
         <button onclick="transit_and_render()">Next</button>
-        <br/>
         <p>
             Initial population density:
             <input class="textBox" id="init_density" value="0.5" size=3/>
@@ -231,6 +236,15 @@
         <p>Grid size:
             <input type="range" id="grid_size_text" min=1 max=10 value=5 onchange="resize_map()"/>
         </p>
+
+        <script type="text/javascript">
+            // generate and render the initial matrix
+            create_svgs();
+            random_init();
+
+            // set timer for periodic update
+            setInterval(transit_and_render, 2000);
+        </script>
     </body>
 </html>
 

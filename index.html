@@ -23,6 +23,7 @@
             var grid_size = 5;
             var grid_status = [];
             var init_density = 0.5;
+            var cur_iter = 0;
 
             // number of alive neighbors
             var grid_alive_neighbors = [];
@@ -52,6 +53,7 @@
 
             function generate_random_grid() {
                 // generate a random initial grid
+                cur_iter = 0;
                 grid_status = [];
                 for (var i = 0; i < map_height; i++) {
                     grid_status[i] = [];
@@ -102,6 +104,7 @@
                         }
                     }
                 }
+                cur_iter = cur_iter + 1;
             }
 
             // render the grid based on data in grid_status
@@ -213,17 +216,16 @@
 
         <br/>
         <button onclick="transit_and_render()">Next</button>
-        <button onclick="restart();">Restart</button>
         <br/>
-        <p>Initial population density:
+        <p>
+            Initial population density:
             <input class="textBox" id="init_density" value="0.5" size=3/>
-            <button onclick="set_init_density()">Set and restart</button>
-        </p>
-
-        <p>Map size: 
+            <br/>
+            Map size:
             <input class="textBox" id="map_width" value="20" size=5/>
             <input class="textBox" id="map_height" value="20" size=5/>
-            <button onclick="reset_map_and_restart()">Set and restart</button>
+            <br/>
+            <button onclick="reset_map_and_restart();">Restart</button>
         </p>
 
         <p>Grid size:

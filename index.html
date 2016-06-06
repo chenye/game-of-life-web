@@ -5,6 +5,7 @@
         <title>Visualizing Algorithms</title>
         <link rel="stylesheet" href="styles.css">
         <script type="text/javascript" src="d3/d3.v3.min.js"></script>
+        <script type="text/javascript" src="d3/colorbrewer.v1.min.js"></script>
     </head>
 
     <body>
@@ -14,12 +15,14 @@
         <script type="text/javascript">
 
             // define an array of colors
-            var rect_colors = ["black", "darkred", "red", "darkblue", "blue", "darkgreen", "green", "yellow", "white"];
+            // var rect_colors = ["black", "darkred", "red", "darkblue", "blue", "darkgreen", "green", "yellow", "white"];
+            var rect_colors = colorbrewer["YlOrRd"][9];
+            var color_life = [rect_colors[0], rect_colors[8]];
             var loc_diff = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, 1], [1, 0], [1, -1]];
 
             // set grid dimensions
-            var map_width = 20;
-            var map_height = 20;
+            var map_width = 40;
+            var map_height = 40;
             var grid_size = 5;
             var grid_status = [];
             var init_density = 0.5;
@@ -108,7 +111,7 @@
             }
 
             // render the grid based on data in grid_status
-            function render(svg_to_use, data_to_show) {
+            function render(svg_to_use, data_to_show, color_scheme) {
                 svg_to_use.append("g")
                     .selectAll("g")
                     .data(data_to_show)
@@ -127,7 +130,7 @@
                         return j * grid_size;
                     })
                     .style("fill", function(d, i) {
-                        return rect_colors[d];
+                        return color_scheme[d];
                     });
             }
 
@@ -140,7 +143,7 @@
                     // .transition()
                     // .duration(1500)
                     .style("fill", function(d, i, j) {
-                        return rect_colors[d];
+                        return color_life[d];
                     });
                 svg_alive.select("g").selectAll("g")
                     .data(grid_alive_neighbors)
@@ -168,8 +171,8 @@
                 generate_random_grid();
                 update_grid_alive_neighbors();
 
-                render(svg, grid_status);
-                render(svg_alive, grid_alive_neighbors);
+                render(svg, grid_status, color_life);
+                render(svg_alive, grid_alive_neighbors, rect_colors);
                 update_iter();
             }
 
@@ -208,8 +211,8 @@
             function resize_map() {
                 grid_size = Number(document.getElementById("grid_size_text").value);
                 remove_maps();
-                render(svg, grid_status);
-                render(svg_alive, grid_alive_neighbors);
+                render(svg, grid_status, color_life);
+                render(svg_alive, grid_alive_neighbors, rect_colors);
                 update_svg_sizes();
             }
 
@@ -227,8 +230,8 @@
             <input class="textBox" id="init_density" value="0.5" size=3/>
             <br/>
             Map size:
-            <input class="textBox" id="map_width" value="20" size=5/>
-            <input class="textBox" id="map_height" value="20" size=5/>
+            <input class="textBox" id="map_width" value="40" size=5/>
+            <input class="textBox" id="map_height" value="40" size=5/>
             <br/>
             <button onclick="reset_map_and_restart();">Restart</button>
         </p>
